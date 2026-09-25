@@ -1,6 +1,7 @@
 package com.contactrapide.app.core.navigation
 
 object Routes {
+    const val ONBOARDING = "onboarding"
     const val SPLASH = "splash"
     const val HOME = "home"
     const val SERVICES = "services"

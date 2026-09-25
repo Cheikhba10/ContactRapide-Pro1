@@ -64,6 +64,7 @@ dependencies {
 
     // Carte OpenStreetMap
     implementation("org.osmdroid:osmdroid-android:6.1.18")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 }
