@@ -39,7 +39,7 @@ import com.contactrapide.app.core.utils.AppConstants
 import com.contactrapide.app.core.utils.IntentUtils
 
 @Composable
-fun AboutScreen(onBack: () -> Unit) {
+fun AboutScreen(onBack: () -> Unit, onBecomeProvider: () -> Unit = {}) {
     val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize().background(OffWhite)) {
@@ -67,7 +67,16 @@ fun AboutScreen(onBack: () -> Unit) {
                         painter = painterResource(id = R.mipmap.ic_launcher),
                         contentDescription = null,
                         modifier = Modifier.size(90.dp)
-                    )
+                    )Button(
+    onClick = { onBecomeProvider() },
+    modifier = Modifier.fillMaxWidth().height(56.dp),
+    shape = RoundedCornerShape(14.dp),
+    colors = ButtonDefaults.buttonColors(containerColor = Green)
+) {
+    Text("💼 Devenir prestataire", color = White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+}
+
+Spacer(Modifier.height(16.dp))
                     Spacer(Modifier.height(10.dp))
                     Text(
                         AppConstants.AGENCY_NAME,

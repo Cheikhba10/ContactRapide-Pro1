@@ -6,14 +6,19 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.contactrapide.app.feature.about.AboutScreen
 import com.contactrapide.app.feature.contact.ContactScreen
 import com.contactrapide.app.feature.home.HomeScreen
 import com.contactrapide.app.feature.map.MapScreen
 import com.contactrapide.app.feature.onboarding.OnboardingScreen
+import com.contactrapide.app.feature.provider.ProviderFormScreen
+import com.contactrapide.app.feature.request.RequestFormScreen
 import com.contactrapide.app.feature.services.ServicesScreen
 import com.contactrapide.app.feature.splash.SplashScreen
 
@@ -27,50 +32,36 @@ fun CrNavHost() {
         navController = navController,
         startDestination = Routes.SPLASH,
         enterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { it },
-                animationSpec = tween(ANIM)
-            ) + fadeIn(animationSpec = tween(ANIM))
+            slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(ANIM)) +
+                fadeIn(animationSpec = tween(ANIM))
         },
         exitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { -it / 4 },
-                animationSpec = tween(ANIM)
-            ) + fadeOut(animationSpec = tween(ANIM))
+            slideOutHorizontally(targetOffsetX = { -it / 4 }, animationSpec = tween(ANIM)) +
+                fadeOut(animationSpec = tween(ANIM))
         },
         popEnterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { -it / 4 },
-                animationSpec = tween(ANIM)
-            ) + fadeIn(animationSpec = tween(ANIM))
+            slideInHorizontally(initialOffsetX = { -it / 4 }, animationSpec = tween(ANIM)) +
+                fadeIn(animationSpec = tween(ANIM))
         },
         popExitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { it },
-                animationSpec = tween(ANIM)
-            ) + fadeOut(animationSpec = tween(ANIM))
+            slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(ANIM)) +
+                fadeOut(animationSpec = tween(ANIM))
         }
     ) {
         composable(Routes.SPLASH) {
-            SplashScreen(
-                onFinished = {
-                    navController.navigate(Routes.ONBOARDING) {
-                        popUpTo(Routes.SPLASH) { inclusive = true }
-                    }
+            SplashScreen(onFinished = {
+                navController.navigate(Routes.ONBOARDING) {
+                    popUpTo(Routes.SPLASH) { inclusive = true }
                 }
-            )
+            })
         }
-
         composable(Routes.ONBOARDING) {
-            OnboardingScreen(
-                onFinished = {
-                    navController.navigate(Routes.HOME) {
-                        popUpTo(Routes.ONBOARDING) { inclusive = true }
-                    }
+            OnboardingScreen(onFinished = {
+                navController.navigate(Routes.HOME) {
+                    popUpTo(Routes.ONBOARDING) { inclusive = true }
                 }
-            )
+            })
         }
-
         composable(Routes.HOME) {
             HomeScreen(
                 onCall = { },
@@ -81,9 +72,34 @@ fun CrNavHost() {
                 onContact = { navController.navigate(Routes.CONTACT) }
             )
         }
-        composable(Routes.SERVICES) { ServicesScreen(onBack = { navController.popBackStack() }) }
+        composable(Routes.SERVICES) {
+            ServicesScreen(
+                onBack = { navController.popBackStack() },
+                onServiceClick = { serviceName ->
+                    navController.navigate("${Routes.REQUEST_FORM}/$serviceName")
+                }
+            )
+        }
+        composable(
+            route = "${Routes.REQUEST_FORM}/{serviceName}",
+            arguments = listOf(navArgument("serviceName") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val serviceName = backStackEntry.arguments?.getString("serviceName") ?: "Service"
+            RequestFormScreen(
+                serviceName = serviceName,
+                onBack = { navController.popBackStack() }
+            )
+        }
         composable(Routes.MAP) { MapScreen(onBack = { navController.popBackStack() }) }
         composable(Routes.CONTACT) { ContactScreen(onBack = { navController.popBackStack() }) }
-        composable(Routes.ABOUT) { AboutScreen(onBack = { navController.popBackStack() }) }
+        composable(Routes.ABOUT) {
+            AboutScreen(
+                onBack = { navController.popBackStack() },
+                onBecomeProvider = { navController.navigate(Routes.PROVIDER_FORM) }
+            )
+        }
+        composable(Routes.PROVIDER_FORM) {
+            ProviderFormScreen(onBack = { navController.popBackStack() })
+        }
     }
 }

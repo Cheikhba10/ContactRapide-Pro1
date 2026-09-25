@@ -8,4 +8,6 @@ object Routes {
     const val MAP = "map"
     const val CONTACT = "contact"
     const val ABOUT = "about"
+    const val REQUEST_FORM = "request_form"
+    const val PROVIDER_FORM = "provider_form"
 }
