@@ -1,0 +1,1 @@
+# ContactRapide ProGuard rules
