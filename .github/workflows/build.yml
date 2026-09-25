@@ -1,4 +1,4 @@
-name: Build ContactRapidePro APK
+name: Build ContactRapidePro
 
 on:
   push:
@@ -15,8 +15,21 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
       - run: chmod +x gradlew
-      - run: ./gradlew assembleDebug --no-daemon --stacktrace
-      - uses: actions/upload-artifact@v4
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
         with:
-          name: ContactRapidePro-APK
+          name: ContactRapidePro-Debug
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ContactRapidePro-Release
+          path: app/build/outputs/apk/release/app-release.apk
