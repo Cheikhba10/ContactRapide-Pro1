@@ -11,14 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,28 +29,30 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.contactrapide.app.core.design.component.CrButton
 import com.contactrapide.app.core.design.component.CrButtonStyle
 import com.contactrapide.app.core.design.component.CrTopBar
-import com.contactrapide.app.core.design.theme.Green
 import com.contactrapide.app.core.design.theme.Navy
 import com.contactrapide.app.core.design.theme.OffWhite
 import com.contactrapide.app.core.design.theme.TextDark
 import com.contactrapide.app.core.design.theme.TextGray
 import com.contactrapide.app.core.design.theme.White
 import com.contactrapide.app.core.utils.IntentUtils
+import com.contactrapide.app.feature.services.allServices
 
 private val quartiers = listOf("Mermoz", "Point E", "Almadies", "Plateau", "Parcelles", "Yoff", "Ouakam", "Autre")
 private val durees = listOf("Ponctuel", "Temps partiel", "Temps plein", "Long terme")
 
 @Composable
 fun RequestFormScreen(
-    serviceName: String,
+    serviceIndex: Int,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
+    val service = allServices.getOrNull(serviceIndex)
 
     var nom by remember { mutableStateOf("") }
     var telephone by remember { mutableStateOf("") }
@@ -65,7 +65,7 @@ fun RequestFormScreen(
     Column(modifier = Modifier.fillMaxSize().background(OffWhite)) {
         CrTopBar(
             title = "Demande de service",
-            subtitle = serviceName,
+            subtitle = service?.title ?: "Service",
             onBack = onBack
         )
 
@@ -83,46 +83,31 @@ fun RequestFormScreen(
             ) {
                 Column(modifier = Modifier.padding(18.dp)) {
 
-                    Text("Vos coordonnées", color = Navy, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text("Vos coordonnees", color = Navy, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Spacer(Modifier.height(12.dp))
 
-                    CrTextField(value = nom, onValueChange = { nom = it }, label = "Nom complet *")
+                    SimpleField(value = nom, onValueChange = { nom = it }, label = "Nom complet")
                     Spacer(Modifier.height(10.dp))
-                    CrTextField(value = telephone, onValueChange = { telephone = it }, label = "Téléphone *", isPhone = true)
+                    SimpleField(value = telephone, onValueChange = { telephone = it }, label = "Telephone")
 
                     Spacer(Modifier.height(18.dp))
                     Text("Votre besoin", color = Navy, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Spacer(Modifier.height(12.dp))
 
-                    // Quartier (chips)
                     Text("Quartier", color = TextGray, fontSize = 13.sp)
                     Spacer(Modifier.height(6.dp))
-                    ChipsRow(items = quartiers, selected = quartier, onSelect = { quartier = it }, columns = 3)
+                    Chips(items = quartiers, selected = quartier, onSelect = { quartier = it }, cols = 3)
                     Spacer(Modifier.height(14.dp))
 
-                    // Durée
                     Text("Type de mission", color = TextGray, fontSize = 13.sp)
                     Spacer(Modifier.height(6.dp))
-                    ChipsRow(items = durees, selected = duree, onSelect = { duree = it }, columns = 2)
+                    Chips(items = durees, selected = duree, onSelect = { duree = it }, cols = 2)
                     Spacer(Modifier.height(14.dp))
 
-                    CrTextField(value = budget, onValueChange = { budget = it }, label = "Budget mensuel (optionnel)", isPhone = true)
+                    SimpleField(value = budget, onValueChange = { budget = it }, label = "Budget mensuel (optionnel)")
                     Spacer(Modifier.height(10.dp))
 
-                    OutlinedTextField(
-                        value = details,
-                        onValueChange = { details = it },
-                        label = { Text("Détails (nombre d'enfants, tâches, etc.)") },
-                        modifier = Modifier.fillMaxWidth().height(110.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Navy,
-                            unfocusedBorderColor = TextGray,
-                            focusedLabelColor = Navy,
-                            cursorColor = Navy
-                        ),
-                        maxLines = 4
-                    )
+                    SimpleField(value = details, onValueChange = { details = it }, label = "Details (optionnel)", multiLine = true)
 
                     if (erreur.isNotEmpty()) {
                         Spacer(Modifier.height(12.dp))
@@ -136,29 +121,29 @@ fun RequestFormScreen(
                         icon = "💬",
                         onClick = {
                             if (nom.isBlank() || telephone.isBlank()) {
-                                erreur = "Nom et téléphone obligatoires"
+                                erreur = "Nom et telephone obligatoires"
                             } else if (quartier.isBlank()) {
                                 erreur = "Choisissez un quartier"
                             } else if (duree.isBlank()) {
                                 erreur = "Choisissez un type de mission"
                             } else {
                                 erreur = ""
-                                val message = buildString {
-                                    appendLine("🔔 NOUVELLE DEMANDE — ContactRapide")
+                                val msg = buildString {
+                                    appendLine("NOUVELLE DEMANDE - ContactRapide")
                                     appendLine()
-                                    appendLine("📋 Service : $serviceName")
-                                    appendLine("👤 Nom : $nom")
-                                    appendLine("📞 Téléphone : $telephone")
-                                    appendLine("📍 Quartier : $quartier")
-                                    appendLine("⏱️ Mission : $duree")
-                                    if (budget.isNotBlank()) appendLine("💰 Budget : $budget FCFA")
+                                    appendLine("Service : ${service?.title ?: "?"}")
+                                    appendLine("Nom : $nom")
+                                    appendLine("Telephone : $telephone")
+                                    appendLine("Quartier : $quartier")
+                                    appendLine("Mission : $duree")
+                                    if (budget.isNotBlank()) appendLine("Budget : $budget FCFA")
                                     if (details.isNotBlank()) {
                                         appendLine()
-                                        appendLine("📝 Détails :")
+                                        appendLine("Details :")
                                         appendLine(details)
                                     }
                                 }
-                                IntentUtils.whatsapp(context, message)
+                                IntentUtils.whatsapp(context, msg)
                             }
                         },
                         style = CrButtonStyle.GREEN,
@@ -168,11 +153,11 @@ fun RequestFormScreen(
                     Spacer(Modifier.height(12.dp))
 
                     Text(
-                        "💡 Vous serez mis en relation sous 1h ouvrée.",
+                        "Vous serez mis en relation sous 1h ouvree.",
                         color = TextGray,
                         fontSize = 12.sp,
                         modifier = Modifier.fillMaxWidth(),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        textAlign = TextAlign.Center
                     )
                 }
             }
@@ -183,57 +168,47 @@ fun RequestFormScreen(
 }
 
 @Composable
-private fun CrTextField(
+private fun SimpleField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
-    isPhone: Boolean = false
+    multiLine: Boolean = false
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = if (multiLine) Modifier.fillMaxWidth().height(110.dp) else Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        singleLine = true,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Navy,
-            unfocusedBorderColor = TextGray,
-            focusedLabelColor = Navy,
-            cursorColor = Navy
-        ),
-        keyboardOptions = if (isPhone)
-            androidx.compose.foundation.text.KeyboardOptions(
-                keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone
-            )
-        else androidx.compose.foundation.text.KeyboardOptions.Default
+        singleLine = !multiLine,
+        maxLines = if (multiLine) 4 else 1
     )
 }
 
 @Composable
-private fun ChipsRow(
+private fun Chips(
     items: List<String>,
     selected: String,
     onSelect: (String) -> Unit,
-    columns: Int
+    cols: Int
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        items.chunked(columns).forEach { rowItems ->
+        items.chunked(cols).forEach { rowItems ->
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 rowItems.forEach { item ->
-                    val isSelected = item == selected
+                    val isSel = item == selected
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))
-                            .background(if (isSelected) Navy else Navy.copy(alpha = 0.08f))
+                            .background(if (isSel) Navy else Navy.copy(alpha = 0.08f))
                             .clickable { onSelect(item) }
                             .padding(horizontal = 14.dp, vertical = 8.dp)
                     ) {
                         Text(
                             text = item,
-                            color = if (isSelected) White else TextDark,
+                            color = if (isSel) White else TextDark,
                             fontSize = 13.sp,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                            fontWeight = if (isSel) FontWeight.Bold else FontWeight.Medium
                         )
                     }
                 }

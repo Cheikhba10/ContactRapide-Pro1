@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -75,18 +74,18 @@ fun CrNavHost() {
         composable(Routes.SERVICES) {
             ServicesScreen(
                 onBack = { navController.popBackStack() },
-                onServiceClick = { serviceName ->
-                    navController.navigate("${Routes.REQUEST_FORM}/$serviceName")
+                onServiceClick = { index ->
+                    navController.navigate("${Routes.REQUEST_FORM}/$index")
                 }
             )
         }
         composable(
-            route = "${Routes.REQUEST_FORM}/{serviceName}",
-            arguments = listOf(navArgument("serviceName") { type = NavType.StringType })
+            route = "${Routes.REQUEST_FORM}/{index}",
+            arguments = listOf(navArgument("index") { type = NavType.IntType })
         ) { backStackEntry ->
-            val serviceName = backStackEntry.arguments?.getString("serviceName") ?: "Service"
+            val index = backStackEntry.arguments?.getInt("index") ?: 0
             RequestFormScreen(
-                serviceName = serviceName,
+                serviceIndex = index,
                 onBack = { navController.popBackStack() }
             )
         }

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -35,7 +34,7 @@ import com.contactrapide.app.core.design.theme.TextDark
 import com.contactrapide.app.core.design.theme.TextGray
 import com.contactrapide.app.core.design.theme.White
 
-private data class ServiceItem(
+data class ServiceItem(
     val emoji: String,
     val title: String,
     val location: String,
@@ -45,11 +44,11 @@ private data class ServiceItem(
     val gradient: List<Color>
 )
 
-private val services = listOf(
+val allServices = listOf(
     ServiceItem(
         emoji = "🧹",
         title = "Aide menagere",
-        location = "Dakar & banlieue",
+        location = "Dakar et banlieue",
         priceFrom = "5 000 FCFA",
         tags = listOf("Menage", "Cuisine", "Repassage", "Surfaces"),
         description = "Femmes de menage experimentees et verifiees. Entretien complet, cuisine, repassage.",
@@ -58,7 +57,7 @@ private val services = listOf(
     ServiceItem(
         emoji = "👶",
         title = "Nounou / Garde d'enfants",
-        location = "Dakar & banlieue",
+        location = "Dakar et banlieue",
         priceFrom = "6 000 FCFA",
         tags = listOf("Garde a domicile", "Sortie d'ecole", "Aide devoirs"),
         description = "Nounous douces et responsables. Garde a domicile, sortie d'ecole, aide aux devoirs.",
@@ -66,8 +65,8 @@ private val services = listOf(
     ),
     ServiceItem(
         emoji = "🚗",
-        title = "Chauffeur & Securite",
-        location = "Dakar & banlieue",
+        title = "Chauffeur et Securite",
+        location = "Dakar et banlieue",
         priceFrom = "10 000 FCFA",
         tags = listOf("Permis B", "Vehicule", "Garde de nuit", "Surveillance"),
         description = "Chauffeurs professionnels et gardiens formes. Permis verifies, references controlees.",
@@ -76,7 +75,7 @@ private val services = listOf(
     ServiceItem(
         emoji = "🤝",
         title = "Personnel polyvalent",
-        location = "Dakar & banlieue",
+        location = "Dakar et banlieue",
         priceFrom = "5 000 FCFA",
         tags = listOf("Courses", "Accompagnement", "Petits travaux"),
         description = "Aides a tout faire : courses, accompagnement, petits travaux, assistance quotidienne.",
@@ -87,7 +86,7 @@ private val services = listOf(
 @Composable
 fun ServicesScreen(
     onBack: () -> Unit,
-    onServiceClick: (String) -> Unit = {}
+    onServiceClick: (Int) -> Unit = {}
 ) {
     Column(modifier = Modifier.fillMaxSize().background(OffWhite)) {
         CrTopBar(
@@ -110,10 +109,10 @@ fun ServicesScreen(
                 lineHeight = 18.sp
             )
 
-            services.forEach { service ->
+            allServices.forEachIndexed { index, service ->
                 ServiceCard(
                     service = service,
-                    onClick = { onServiceClick(service.title) }
+                    onClick = { onServiceClick(index) }
                 )
             }
 
@@ -211,20 +210,21 @@ private fun ServiceCard(service: ServiceItem, onClick: () -> Unit) {
 
                 Spacer(Modifier.height(14.dp))
 
-                Row(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
                         .background(Green)
                         .clickable { onClick() }
                         .padding(14.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text("Demander ce service",
+                    Text(
+                        text = "Demander ce service",
                         color = White,
                         fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold)
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }
