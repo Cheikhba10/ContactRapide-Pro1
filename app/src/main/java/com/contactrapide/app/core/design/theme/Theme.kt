@@ -1,9 +1,7 @@
 package com.contactrapide.app.core.design.theme
 
 import android.app.Activity
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -28,36 +26,20 @@ private val LightColors = lightColorScheme(
     onError = White
 )
 
-private val DarkColors = darkColorScheme(
-    primary = Gold,
-    onPrimary = NavyDark,
-    secondary = Gold,
-    onSecondary = NavyDark,
-    tertiary = Green,
-    onTertiary = White,
-    background = NavyDark,
-    onBackground = White,
-    surface = Navy,
-    onSurface = White,
-    surfaceVariant = NavyLight,
-    onSurfaceVariant = Gold,
-    error = Red,
-    onError = White
-)
-
 @Composable
 fun ContactRapideTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColors else LightColors
+    val colorScheme = LightColors
 
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = Navy.toArgb()
+            window.navigationBarColor = White.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = true
         }
     }
 
