@@ -18,6 +18,7 @@ import com.contactrapide.app.feature.map.MapScreen
 import com.contactrapide.app.feature.onboarding.OnboardingScreen
 import com.contactrapide.app.feature.provider.ProviderFormScreen
 import com.contactrapide.app.feature.request.RequestFormScreen
+import com.contactrapide.app.feature.services.ServiceDetailScreen
 import com.contactrapide.app.feature.services.ServicesScreen
 import com.contactrapide.app.feature.splash.SplashScreen
 
@@ -68,13 +69,29 @@ fun CrNavHost() {
                 onLocation = { navController.navigate(Routes.MAP) },
                 onServices = { navController.navigate(Routes.SERVICES) },
                 onAbout = { navController.navigate(Routes.ABOUT) },
-                onContact = { navController.navigate(Routes.CONTACT) }
+                onContact = { navController.navigate(Routes.CONTACT) },
+                onCategoryClick = { index ->
+                    navController.navigate("${Routes.SERVICE_DETAIL}/$index")
+                }
             )
         }
         composable(Routes.SERVICES) {
             ServicesScreen(
                 onBack = { navController.popBackStack() },
                 onServiceClick = { index ->
+                    navController.navigate("${Routes.SERVICE_DETAIL}/$index")
+                }
+            )
+        }
+        composable(
+            route = "${Routes.SERVICE_DETAIL}/{index}",
+            arguments = listOf(navArgument("index") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val index = backStackEntry.arguments?.getInt("index") ?: 0
+            ServiceDetailScreen(
+                serviceIndex = index,
+                onBack = { navController.popBackStack() },
+                onRequest = {
                     navController.navigate("${Routes.REQUEST_FORM}/$index")
                 }
             )
