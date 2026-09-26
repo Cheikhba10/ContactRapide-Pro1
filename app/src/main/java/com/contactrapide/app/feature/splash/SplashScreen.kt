@@ -65,7 +65,7 @@ fun SplashScreen(onFinished: () -> Unit) {
             modifier = Modifier.alpha(alpha).scale(scale)
         ) {
             Image(
-                painter = painterResource(id = R.mipmap.ic_launcher),
+                painter = painterResource(id = R.drawable.logo_contactrapide),
                 contentDescription = "ContactRapide",
                 modifier = Modifier.size(140.dp)
             )

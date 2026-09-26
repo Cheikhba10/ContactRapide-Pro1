@@ -82,7 +82,7 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(id = R.mipmap.ic_launcher),
+                painter = painterResource(id = R.drawable.logo_contactrapide),
                 contentDescription = "ContactRapide",
                 modifier = Modifier.size(90.dp).clip(CircleShape)
             )
