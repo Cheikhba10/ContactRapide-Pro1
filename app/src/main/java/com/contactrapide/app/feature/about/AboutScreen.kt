@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -39,11 +41,14 @@ import com.contactrapide.app.core.utils.AppConstants
 import com.contactrapide.app.core.utils.IntentUtils
 
 @Composable
-fun AboutScreen(onBack: () -> Unit, onBecomeProvider: () -> Unit = {}) {
+fun AboutScreen(
+    onBack: () -> Unit,
+    onBecomeProvider: () -> Unit = {}
+) {
     val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize().background(OffWhite)) {
-        CrTopBar(title = "À propos", onBack = onBack)
+        CrTopBar(title = "A propos", onBack = onBack)
 
         Column(
             modifier = Modifier
@@ -52,7 +57,6 @@ fun AboutScreen(onBack: () -> Unit, onBecomeProvider: () -> Unit = {}) {
                 .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Logo + nom
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(18.dp),
@@ -67,16 +71,7 @@ fun AboutScreen(onBack: () -> Unit, onBecomeProvider: () -> Unit = {}) {
                         painter = painterResource(id = R.mipmap.ic_launcher),
                         contentDescription = null,
                         modifier = Modifier.size(90.dp)
-                    )Button(
-    onClick = { onBecomeProvider() },
-    modifier = Modifier.fillMaxWidth().height(56.dp),
-    shape = RoundedCornerShape(14.dp),
-    colors = ButtonDefaults.buttonColors(containerColor = Green)
-) {
-    Text("💼 Devenir prestataire", color = White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-}
-
-Spacer(Modifier.height(16.dp))
+                    )
                     Spacer(Modifier.height(10.dp))
                     Text(
                         AppConstants.AGENCY_NAME,
@@ -86,7 +81,7 @@ Spacer(Modifier.height(16.dp))
                     )
                     Spacer(Modifier.height(6.dp))
                     Text(
-                        "Besoin d'une bonne à Dakar ?",
+                        "Besoin d'une bonne a Dakar ?",
                         color = Gold,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold
@@ -94,19 +89,30 @@ Spacer(Modifier.height(16.dp))
                 }
             }
 
-            // Mission
             InfoCard(
                 title = "Notre mission",
-                body = "Nous mettons en relation les familles et entreprises de Dakar avec un personnel de confiance, rigoureusement sélectionné et vérifié.\n\nOn sélectionne ✅  On vérifie ✅  On place ✅"
+                body = "Nous mettons en relation les familles et entreprises de Dakar avec un personnel de confiance, selectionne et verifie."
             )
 
-            // Horaires
             InfoCard(
                 title = "Horaires d'ouverture",
                 body = "Lundi - Vendredi : 08h00 - 20h00\nSamedi : 09h00 - 18h00\nDimanche : Sur rendez-vous"
             )
 
-            // Contact
+            Button(
+                onClick = { onBecomeProvider() },
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Green)
+            ) {
+                Text(
+                    text = "Devenir prestataire",
+                    color = White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -122,7 +128,7 @@ Spacer(Modifier.height(16.dp))
                     )
                     Spacer(Modifier.height(12.dp))
                     Text(
-                        "📞  ${AppConstants.PHONE_DISPLAY}",
+                        "Tel : ${AppConstants.PHONE_DISPLAY}",
                         color = Navy,
                         fontSize = 15.sp,
                         modifier = Modifier
@@ -131,7 +137,7 @@ Spacer(Modifier.height(16.dp))
                             .padding(vertical = 6.dp)
                     )
                     Text(
-                        "💬  ${AppConstants.WHATSAPP_DISPLAY}",
+                        "WhatsApp : ${AppConstants.WHATSAPP_DISPLAY}",
                         color = Green,
                         fontSize = 15.sp,
                         modifier = Modifier
@@ -140,7 +146,7 @@ Spacer(Modifier.height(16.dp))
                             .padding(vertical = 6.dp)
                     )
                     Text(
-                        "📍  ${AppConstants.ADDRESS}",
+                        "Adresse : ${AppConstants.ADDRESS}",
                         color = TextDark,
                         fontSize = 15.sp,
                         modifier = Modifier
