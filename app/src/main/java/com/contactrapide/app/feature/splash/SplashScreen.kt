@@ -67,7 +67,7 @@ fun SplashScreen(onFinished: () -> Unit) {
             Image(
                 painter = painterResource(id = R.drawable.logo_contactrapide),
                 contentDescription = "ContactRapide",
-                modifier = Modifier.size(140.dp)
+                modifier = Modifier.size(180.dp)
             )
             Spacer(Modifier.height(24.dp))
             Text(

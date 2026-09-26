@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -84,7 +85,7 @@ fun HomeScreen(
             Image(
                 painter = painterResource(id = R.drawable.logo_contactrapide),
                 contentDescription = "ContactRapide",
-                modifier = Modifier.size(90.dp).clip(CircleShape)
+                modifier = Modifier.size(130.dp).clip(RoundedCornerShape(20.dp))
             )
             Spacer(Modifier.height(12.dp))
             Text("ContactRapide", color = White, fontSize = 26.sp, fontWeight = FontWeight.Bold)

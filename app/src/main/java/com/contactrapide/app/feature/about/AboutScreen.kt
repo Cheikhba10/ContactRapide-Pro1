@@ -70,7 +70,7 @@ fun AboutScreen(
                     Image(
                         painter = painterResource(id = R.drawable.logo_contactrapide),
                         contentDescription = null,
-                        modifier = Modifier.size(90.dp)
+                        modifier = Modifier.size(130.dp)
                     )
                     Spacer(Modifier.height(10.dp))
                     Text(
