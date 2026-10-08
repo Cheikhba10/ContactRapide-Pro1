@@ -122,8 +122,8 @@ EDITEUR DE L'APPLICATION
 
 - Nom / Raison sociale : ContactRapide
 - Forme juridique : A completer
-- RCCM : A completer
-- NINEA : A completer
+- RCCM : EN COURS
+- NINEA : EN COURS
 - Siege social : Parcelles rond-point / Agence Yas, Dakar, Senegal
 - Telephone : 76 130 13 30
 - Responsable de la publication : A completer
