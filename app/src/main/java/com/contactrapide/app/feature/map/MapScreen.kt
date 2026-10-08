@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -67,41 +66,29 @@ import org.osmdroid.views.overlay.compass.CompassOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
-// Satellite (Esri World Imagery - gratuit pour usage non commercial)
+// Satellite Esri World Imagery (URL CORRIGEE)
 private val SATELLITE_SOURCE = XYTileSource(
     "EsriWorldImagery",
-    1, 20, 256, ".jpg",
-    arrayOf("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/")
-)
-
-// Relief (OpenTopoMap)
-private val RELIEF_SOURCE = XYTileSource(
-    "OpenTopoMap",
-    1, 17, 256, ".png",
-    arrayOf("https://a.tile.opentopomap.org/", "https://b.tile.opentopomap.org/", "https://c.tile.opentopomap.org/")
+    1, 19, 256, ".jpg",
+    arrayOf("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}")
 )
 
 enum class MapMode(val label: String) {
     PLAN("Plan"),
-    SATELLITE("Satellite"),
-    RELIEF("Relief")
+    SATELLITE("Satellite")
 }
 
-// Points de repere autour de l'agence
+// Points de repere (juste 3 pour ne pas surcharger)
 private data class Landmark(
     val name: String,
-    val emoji: String,
     val lat: Double,
     val lon: Double
 )
 
 private val landmarks = listOf(
-    Landmark("Agence ContactRapide", "🏢", 14.7551443, -17.4306665),
-    Landmark("Rond-point Parcelles", "🔵", 14.7543000, -17.4300000),
-    Landmark("Station Total", "⛽", 14.7560000, -17.4295000),
-    Landmark("Marche Parcelles", "🛒", 14.7548000, -17.4315000),
-    Landmark("Pharmacie", "💊", 14.7555000, -17.4298000),
-    Landmark("Ecole primaire", "🏫", 14.7538000, -17.4308000)
+    Landmark("Rond-point Parcelles", 14.7543000, -17.4300000),
+    Landmark("Station Total", 14.7560000, -17.4295000),
+    Landmark("Marche Parcelles", 14.7548000, -17.4315000)
 )
 
 @Composable
@@ -110,7 +97,7 @@ fun MapScreen(onBack: () -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val agencyPoint = remember { GeoPoint(AppConstants.LATITUDE, AppConstants.LONGITUDE) }
-    var currentMode by remember { mutableStateOf(MapMode.PLAN) }
+    var currentMode by remember { mutableStateOf(MapMode.SATELLITE) }
 
     val locationOverlay = remember {
         MyLocationNewOverlay(GpsMyLocationProvider(context), MapView(context)).apply {
@@ -120,18 +107,27 @@ fun MapScreen(onBack: () -> Unit) {
 
     val mapView = remember {
         MapView(context).apply {
-            setTileSource(TileSourceFactory.MAPNIK)
+            setTileSource(SATELLITE_SOURCE)
             setMultiTouchControls(true)
             controller.setZoom(16.0)
             controller.setCenter(agencyPoint)
 
             overlays.add(CompassOverlay(context, this))
 
-            // Marqueurs de repere
+            // Marqueur principal AGENCE
+            val agencyMarker = Marker(this).apply {
+                position = agencyPoint
+                title = "ContactRapide"
+                snippet = AppConstants.ADDRESS
+                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            }
+            overlays.add(agencyMarker)
+
+            // Points de repere secondaires
             landmarks.forEach { landmark ->
                 val marker = Marker(this).apply {
                     position = GeoPoint(landmark.lat, landmark.lon)
-                    title = "${landmark.emoji} ${landmark.name}"
+                    title = landmark.name
                     setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                 }
                 overlays.add(marker)
@@ -141,13 +137,11 @@ fun MapScreen(onBack: () -> Unit) {
         }
     }
 
-    // Changer le mode de carte
     LaunchedEffect(currentMode) {
         mapView.setTileSource(
             when (currentMode) {
                 MapMode.PLAN -> TileSourceFactory.MAPNIK
                 MapMode.SATELLITE -> SATELLITE_SOURCE
-                MapMode.RELIEF -> RELIEF_SOURCE
             }
         )
         mapView.invalidate()
@@ -188,10 +182,9 @@ fun MapScreen(onBack: () -> Unit) {
 
         Box(modifier = Modifier.fillMaxSize()) {
 
-            // CARTE
             AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
 
-            // SELECTEUR DE MODE (en haut)
+            // SELECTEUR 2 MODES
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -212,12 +205,12 @@ fun MapScreen(onBack: () -> Unit) {
                                     .clip(RoundedCornerShape(24.dp))
                                     .background(if (isSelected) Navy else Color.Transparent)
                                     .clickable { currentMode = mode }
-                                    .padding(horizontal = 18.dp, vertical = 10.dp)
+                                    .padding(horizontal = 24.dp, vertical = 10.dp)
                             ) {
                                 Text(
                                     text = mode.label,
                                     color = if (isSelected) White else Navy,
-                                    fontSize = 13.sp,
+                                    fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
@@ -226,7 +219,7 @@ fun MapScreen(onBack: () -> Unit) {
                 }
             }
 
-            // BOUTONS ZOOM (droite)
+            // BOUTONS FLOTTANTS
             Column(
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
