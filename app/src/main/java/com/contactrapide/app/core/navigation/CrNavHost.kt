@@ -104,7 +104,8 @@ fun CrNavHost() {
             val index = backStackEntry.arguments?.getInt("index") ?: 0
             RequestFormScreen(
                 serviceIndex = index,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onOpenLegal = { navController.navigate(Routes.LEGAL) }
             )
         }
         composable(Routes.MAP) { MapScreen(onBack = { navController.popBackStack() }) }
@@ -117,7 +118,10 @@ fun CrNavHost() {
             )
         }
         composable(Routes.PROVIDER_FORM) {
-            ProviderFormScreen(onBack = { navController.popBackStack() })
+            ProviderFormScreen(
+                onBack = { navController.popBackStack() },
+                onOpenLegal = { navController.navigate(Routes.LEGAL) }
+            )
         }
         composable(Routes.LEGAL) {
             LegalScreen(onBack = { navController.popBackStack() })

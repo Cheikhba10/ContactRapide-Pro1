@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,12 +26,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.contactrapide.app.core.design.component.CrButton
@@ -46,7 +51,10 @@ private val services = listOf("Menage", "Nounou", "Chauffeur", "Securite", "Poly
 private val experiences = listOf("Debutant", "1-3 ans", "3-5 ans", "+5 ans")
 
 @Composable
-fun ProviderFormScreen(onBack: () -> Unit) {
+fun ProviderFormScreen(
+    onBack: () -> Unit,
+    onOpenLegal: () -> Unit = {}
+) {
     val context = LocalContext.current
 
     var nom by remember { mutableStateOf("") }
@@ -56,6 +64,7 @@ fun ProviderFormScreen(onBack: () -> Unit) {
     var experience by remember { mutableStateOf("") }
     var quartier by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
+    var consentement by remember { mutableStateOf(false) }
     var erreur by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.fillMaxSize().background(OffWhite)) {
@@ -134,12 +143,20 @@ fun ProviderFormScreen(onBack: () -> Unit) {
 
                     SimpleF(value = message, onChange = { message = it }, label = "Presentez-vous (optionnel)", multiLine = true)
 
+                    Spacer(Modifier.height(16.dp))
+
+                    ConsentementRowP(
+                        checked = consentement,
+                        onCheckedChange = { consentement = it },
+                        onOpenLegal = onOpenLegal
+                    )
+
                     if (erreur.isNotEmpty()) {
                         Spacer(Modifier.height(12.dp))
                         Text(erreur, color = Color(0xFFC62828), fontSize = 13.sp, fontWeight = FontWeight.Medium)
                     }
 
-                    Spacer(Modifier.height(20.dp))
+                    Spacer(Modifier.height(16.dp))
 
                     CrButton(
                         text = "Envoyer ma candidature",
@@ -151,6 +168,8 @@ fun ProviderFormScreen(onBack: () -> Unit) {
                                 erreur = "Choisissez un service"
                             } else if (quartier.isBlank()) {
                                 erreur = "Indiquez votre quartier"
+                            } else if (!consentement) {
+                                erreur = "Vous devez accepter les CGU et la Politique de Confidentialite"
                             } else {
                                 erreur = ""
                                 val msg = buildString {
@@ -188,6 +207,43 @@ fun ProviderFormScreen(onBack: () -> Unit) {
             }
 
             Spacer(Modifier.height(24.dp))
+        }
+    }
+}
+
+@Composable
+private fun ConsentementRowP(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    onOpenLegal: () -> Unit
+) {
+    Row(verticalAlignment = Alignment.Top, modifier = Modifier.fillMaxWidth()) {
+        Checkbox(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = CheckboxDefaults.colors(
+                checkedColor = Navy,
+                uncheckedColor = TextGray
+            ),
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(Modifier.padding(horizontal = 4.dp))
+        Column(modifier = Modifier.padding(top = 8.dp)) {
+            Text(
+                text = "J'accepte les CGU et la Politique de Confidentialite",
+                color = TextDark,
+                fontSize = 13.sp,
+                lineHeight = 18.sp
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = "Lire les documents legaux",
+                color = Navy,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier.clickable { onOpenLegal() }
+            )
         }
     }
 }
