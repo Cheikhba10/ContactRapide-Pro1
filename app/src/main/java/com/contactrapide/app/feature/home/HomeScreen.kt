@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -47,14 +49,15 @@ private data class HomeCategory(
     val emoji: String,
     val title: String,
     val subtitle: String,
-    val color: Color
+    val color: Color,
+    val accessibilityLabel: String
 )
 
 private val homeCategories = listOf(
-    HomeCategory("🧹", "Ménage", "dès 5 000 F", Color(0xFF16A085)),
-    HomeCategory("👶", "Nounou", "dès 6 000 F", Color(0xFFE67E22)),
-    HomeCategory("🚗", "Chauffeur", "dès 10 000 F", Color(0xFF8E44AD)),
-    HomeCategory("🤝", "Polyvalent", "dès 5 000 F", Color(0xFF2980B9))
+    HomeCategory("🧹", "Ménage", "dès 5 000 F", Color(0xFF16A085), "Service Ménage, à partir de 5 000 francs CFA"),
+    HomeCategory("👶", "Nounou", "dès 6 000 F", Color(0xFFE67E22), "Service Nounou, à partir de 6 000 francs CFA"),
+    HomeCategory("🚗", "Chauffeur", "dès 10 000 F", Color(0xFF8E44AD), "Service Chauffeur, à partir de 10 000 francs CFA"),
+    HomeCategory("🤝", "Polyvalent", "dès 5 000 F", Color(0xFF2980B9), "Service Personnel polyvalent, à partir de 5 000 francs CFA")
 )
 
 @Composable
@@ -84,7 +87,7 @@ fun HomeScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.logo_contactrapide),
-                contentDescription = "ContactRapide",
+                contentDescription = "Logo ContactRapide, agence de placement de personnel à Dakar",
                 modifier = Modifier.size(130.dp).clip(RoundedCornerShape(20.dp))
             )
             Spacer(Modifier.height(12.dp))
@@ -202,7 +205,10 @@ fun HomeScreen(
 private fun CategoryCircle(category: HomeCategory, onClick: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.width(80.dp).clickable { onClick() }
+        modifier = Modifier
+            .width(80.dp)
+            .clickable { onClick() }
+            .semantics { contentDescription = category.accessibilityLabel }
     ) {
         Box(
             modifier = Modifier
