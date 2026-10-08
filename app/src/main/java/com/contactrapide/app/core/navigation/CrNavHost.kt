@@ -14,6 +14,7 @@ import androidx.navigation.navArgument
 import com.contactrapide.app.feature.about.AboutScreen
 import com.contactrapide.app.feature.contact.ContactScreen
 import com.contactrapide.app.feature.home.HomeScreen
+import com.contactrapide.app.feature.legal.LegalScreen
 import com.contactrapide.app.feature.map.MapScreen
 import com.contactrapide.app.feature.onboarding.OnboardingScreen
 import com.contactrapide.app.feature.provider.ProviderFormScreen
@@ -111,11 +112,15 @@ fun CrNavHost() {
         composable(Routes.ABOUT) {
             AboutScreen(
                 onBack = { navController.popBackStack() },
-                onBecomeProvider = { navController.navigate(Routes.PROVIDER_FORM) }
+                onBecomeProvider = { navController.navigate(Routes.PROVIDER_FORM) },
+                onLegal = { navController.navigate(Routes.LEGAL) }
             )
         }
         composable(Routes.PROVIDER_FORM) {
             ProviderFormScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.LEGAL) {
+            LegalScreen(onBack = { navController.popBackStack() })
         }
     }
 }

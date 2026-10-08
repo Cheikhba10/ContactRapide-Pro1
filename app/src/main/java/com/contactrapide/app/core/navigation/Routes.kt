@@ -11,4 +11,5 @@ object Routes {
     const val ABOUT = "about"
     const val REQUEST_FORM = "request_form"
     const val PROVIDER_FORM = "provider_form"
+    const val LEGAL = "legal"
 }
