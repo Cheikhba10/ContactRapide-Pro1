@@ -163,7 +163,7 @@ fun MapScreen(onBack: () -> Unit) {
             val polygon = Polygon(this).apply {
                 points = coverageZone
                 fillColor = AndroidColor.argb(40, 30, 122, 60)
-                outlineColor = AndroidColor.rgb(30, 122, 60)
+                outlinePaint.color = AndroidColor.rgb(30, 122, 60)
                 title = "Zone de couverture"
             }
             overlays.add(polygon)
